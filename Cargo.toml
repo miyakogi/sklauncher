@@ -3,6 +3,12 @@ name = "sklauncher"
 version = "0.1.0"
 authors = ["miyakogi <miyako.dev@gmail.com>"]
 edition = "2021"
+description = "Terminal based application launcher for Linux"
+
+readme = "README.md"
+license = "MIT"
+keyword = ["tui", "launcher"]
+repository = "https://github.com/miyakogi/sklauncher/"
 
 [dependencies]
 lazy_static = "1.4"
