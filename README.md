@@ -20,7 +20,7 @@ Installation
 ```
 git clone https://github.com/miyakogi/sklauncher.git
 cd sklauncher
-cargo install --path .
+cargo install --locked --path .
 ```
 
 Example Usage
