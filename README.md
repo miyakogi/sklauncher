@@ -1,6 +1,9 @@
 sklauncher
 ==========
 
+[![crates.io](https://img.shields.io/crates/v/sklauncher)](https://crates.io/crates/sklauncher)
+
+
 Rust-written terminal based application launcher for Linux, inspired by [sway-launcher-desktop](https://github.com/Biont/sway-launcher-desktop), based on [skim](https://github.com/lotabout/skim) fuzzy finder.
 
 
@@ -16,6 +19,14 @@ Features
 
 Installation
 ------------
+
+### Stable Version
+
+```
+cargo install sklauncher
+```
+
+### Develop Version
 
 ```
 git clone https://github.com/miyakogi/sklauncher.git
