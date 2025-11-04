@@ -63,6 +63,7 @@ fn exec_term(entry: Entry) {
     _exec(&command);
 }
 
+#[allow(clippy::zombie_processes)]
 fn _exec(cmd: &str) {
     Command::new("setsid")
         .arg("sh")

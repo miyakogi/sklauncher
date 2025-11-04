@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::env;
 use std::fmt::Write as FmtWrite;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::SystemTime;
 
@@ -49,7 +49,7 @@ fn get_paths() -> Vec<PathBuf> {
     result
 }
 
-fn get_mtime(file: &PathBuf) -> f64 {
+fn get_mtime(file: &Path) -> f64 {
     fs::metadata(file)
         .expect("Failed to check metadata")
         .modified()
@@ -104,7 +104,7 @@ impl Entry {
 }
 
 impl SkimItem for Entry {
-    fn text(&self) -> Cow<str> {
+    fn text(&self) -> Cow<'_, str> {
         if self.desktop {
             if !*MATCH_GENERIC_NAME {
                 return Cow::Borrowed(&self.name);
@@ -175,7 +175,7 @@ impl SkimItem for Entry {
         }
     }
 
-    fn output(&self) -> Cow<str> {
+    fn output(&self) -> Cow<'_, str> {
         Cow::Borrowed(&self.path)
     }
 
@@ -183,13 +183,11 @@ impl SkimItem for Entry {
         let mut text = String::new();
         write!(text, "\x1b[3{}m{}\x1b[m", *ACCENT_COLOR, self.name).unwrap();
         if self.desktop {
-            match &self.generic_name {
-                Some(gname) => write!(text, " | {}", gname).unwrap(),
-                None => {}
+            if let Some(gname) = &self.generic_name {
+                write!(text, " | {}", gname).unwrap();
             }
-            match &self.comment {
-                Some(comment) => write!(text, "\n{}", comment).unwrap(),
-                None => {}
+            if let Some(comment) = &self.comment {
+                write!(text, "\n{}", comment).unwrap();
             }
         } else {
             let output = Command::new("whatis")
@@ -234,7 +232,7 @@ pub fn load_bin_entries(history: &EntryMap) -> EntryMap {
     result
 }
 
-fn load_bin_entry(file: &PathBuf, history: &EntryMap) -> Entry {
+fn load_bin_entry(file: &Path, history: &EntryMap) -> Entry {
     let mut entry = Entry::new();
     let filestr = file.to_str().unwrap().to_string();
     let filename = file.file_name().unwrap().to_str().unwrap().to_string();
@@ -258,7 +256,7 @@ pub fn load_desktop_entries(history: &EntryMap) -> EntryMap {
     result
 }
 
-fn load_desktop_entry_dir(dir: &PathBuf, history: &EntryMap) -> EntryMap {
+fn load_desktop_entry_dir(dir: &Path, history: &EntryMap) -> EntryMap {
     let mut entries: EntryMap = IndexMap::new();
     for path in dir
         .read_dir()
@@ -288,7 +286,7 @@ fn load_desktop_entry_dir(dir: &PathBuf, history: &EntryMap) -> EntryMap {
     entries
 }
 
-fn load_desktop_entry_file(file: &PathBuf, history: &EntryMap) -> Option<Entry> {
+fn load_desktop_entry_file(file: &Path, history: &EntryMap) -> Option<Entry> {
     // check file modified time and if it's not modified since prev access, return cached entry
     let count;
     let mtime = get_mtime(file);
@@ -308,10 +306,7 @@ fn load_desktop_entry_file(file: &PathBuf, history: &EntryMap) -> Option<Entry> 
         Ok(c) => c,
         Err(_) => return None,
     };
-    let section = match conf.section(Some("Desktop Entry")) {
-        Some(s) => s,
-        None => return None,
-    };
+    let section = conf.section(Some("Desktop Entry"))?;
 
     // create new entry from desktop entry
     let mut entry = Entry::new();

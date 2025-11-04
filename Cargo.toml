@@ -7,7 +7,7 @@ description = "Terminal based application launcher for Linux"
 
 readme = "README.md"
 license = "MIT"
-keyword = ["tui", "launcher"]
+keywords = ["tui", "launcher"]
 repository = "https://github.com/miyakogi/sklauncher/"
 
 [dependencies]
