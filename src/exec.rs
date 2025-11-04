@@ -58,8 +58,8 @@ fn exec_term(entry: Entry) {
     }
     term_cmd.push(cmd);
 
-    // convert Vec<String> to Iter<&str> and join to a single String
-    let command = shlex::join(term_cmd.iter().map(String::as_str));
+    let command = shlex::try_join(term_cmd.iter().map(String::as_str))
+        .expect("Failed to join command");
     _exec(&command);
 }
 
