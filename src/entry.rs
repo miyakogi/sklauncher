@@ -141,7 +141,7 @@ impl SkimItem for Entry {
                     return AnsiString::new_string(text, vec![]);
                 }
                 let fragments = indices
-                    .into_iter()
+                    .iter()
                     .map(|&i| {
                         (
                             context.highlight_attr,
@@ -196,7 +196,7 @@ impl SkimItem for Entry {
                 .arg("--long")
                 .arg(&self.path)
                 .output()
-                .expect(&format!("Failed to read man of command: {}", self.path));
+                .unwrap_or_else(|_| panic!("Failed to read man of command: {}", self.path));
             if output.status.success() {
                 let comment = String::from_utf8(output.stdout).unwrap();
                 write!(text, "\n{}", RE_WHATIS.replace_all(&comment, "")).unwrap();

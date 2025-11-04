@@ -49,7 +49,7 @@ fn exec_term(entry: Entry) {
     let mut term_cmd: Vec<String> = Vec::new();
     match &OPTIONS.terminal_command {
         Some(val) => {
-            term_cmd.extend(shlex::split(&val).expect("Failed to parse --terminal-command option"))
+            term_cmd.extend(shlex::split(val).expect("Failed to parse --terminal-command option"))
         }
         None => match env::var_os("TERM") {
             Some(val) => term_cmd = vec![val.to_str().unwrap().to_string(), "-e".to_string()],

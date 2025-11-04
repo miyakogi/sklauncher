@@ -29,6 +29,6 @@ pub fn save_history(history: &IndexMap<String, Entry>) {
     let mut file = fs::File::create(hist_file_path).expect("Failed to open history file");
     let contents = toml::to_string::<IndexMap<String, Entry>>(history)
         .expect("Failed convert history to toml format");
-    file.write(contents.as_bytes())
+    file.write_all(contents.as_bytes())
         .expect("Failed to write history file");
 }

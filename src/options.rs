@@ -1,3 +1,5 @@
+use std::fmt;
+
 use clap::{Parser, ValueEnum};
 use skim::prelude::*;
 
@@ -172,14 +174,16 @@ pub enum Tiebreak {
     End,
 }
 
-impl Tiebreak {
-    pub fn to_string(&self) -> String {
-        match self {
+impl fmt::Display for Tiebreak {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let result = match self {
             Tiebreak::Score => "score".to_string(),
             Tiebreak::Index => "index".to_string(),
             Tiebreak::Begin => "begin".to_string(),
             Tiebreak::End => "end".to_string(),
-        }
+        };
+        write!(f, "{}", result)?;
+        Ok(())
     }
 }
 
