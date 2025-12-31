@@ -14,6 +14,16 @@ pub struct Cli {
     #[arg(long, value_name = "COMMAND")]
     pub terminal_command: Option<String>,
 
+    /// Prefix command applied before executing the selected command (e.g. wrappers)
+    ///
+    /// Useful for shims that take the target command after a `--`, such as:
+    ///
+    ///     --command-prefix 'app2unit --'
+    ///
+    /// With the above, selecting `alacritty` runs: `app2unit -- alacritty`.
+    #[arg(long = "command-prefix", value_name = "COMMAND")]
+    pub command_prefix: Option<String>,
+
     /// Show GenericName field of desktop entries
     #[arg(long)]
     pub show_generic_name: bool,

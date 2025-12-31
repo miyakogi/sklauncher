@@ -16,6 +16,7 @@ Features
 - History-based ordering
 - Direct raw-command execution support
 - Support [skim](https://github.com/lotabout/skim)'s options and customizable (currently not all options are available)
+- Optional prefix command to wrap execution (e.g., `--command-prefix 'app2unit --'`)
 
 Installation
 ------------
@@ -60,6 +61,14 @@ for_window [app_id="^sklauncher$"] floating enable, sticky enable
 ```
 
 ![with some options](./asset/screenshot-customized.jpg)
+
+### Prefix command example
+
+Wrap the selected command with another launcher or shim. For example, to insert `app2unit --` before the chosen command:
+
+```
+sklauncher --command-prefix 'app2unit --'
+```
 
 See `sklauncher --help` for more information about available options.
 

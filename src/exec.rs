@@ -39,7 +39,8 @@ fn exec_command(entry: Entry) {
 // Run app from desktop entry, not terminal app
 fn exec_app(entry: Entry) {
     let cmd = entry.exec.trim();
-    _exec(&RE_EXEC_OPT.replace_all(cmd, ""));
+    let cleaned = RE_EXEC_OPT.replace_all(cmd, "").into_owned();
+    _exec(&cleaned);
 }
 
 // Run terminal app from desktop entry
@@ -58,17 +59,21 @@ fn exec_term(entry: Entry) {
     }
     term_cmd.push(cmd);
 
-    let command = shlex::try_join(term_cmd.iter().map(String::as_str))
+    let joined_command = shlex::try_join(term_cmd.iter().map(String::as_str))
         .expect("Failed to join command");
-    _exec(&command);
+    _exec(&joined_command);
 }
 
 #[allow(clippy::zombie_processes)]
 fn _exec(cmd: &str) {
+    let command = match &OPTIONS.command_prefix {
+        Some(prefix) if !prefix.is_empty() => format!("{} {}", prefix, cmd),
+        _ => cmd.to_string(),
+    };
     Command::new("setsid")
         .arg("sh")
         .arg("-c")
-        .arg(cmd)
+        .arg(command)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
