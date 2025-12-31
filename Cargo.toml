@@ -1,6 +1,6 @@
 [package]
 name = "sklauncher"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["miyakogi <miyako.dev@gmail.com>"]
 edition = "2024"
 description = "Terminal based application launcher for Linux"

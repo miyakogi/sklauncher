@@ -891,7 +891,7 @@ dependencies = [
 
 [[package]]
 name = "sklauncher"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap 4.5.53",
  "indexmap 1.9.3",
