@@ -59,7 +59,7 @@ fn get_mtime(file: &Path) -> f64 {
         .as_secs_f64()
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Entry {
     path: String,
     mtime: Option<f64>,
@@ -341,7 +341,9 @@ pub fn load_entries() -> EntryMap {
     let history: EntryMap = load_history();
     let mut entries: EntryMap = load_desktop_entries(&history);
     entries.extend(load_bin_entries(&history));
-    save_history(&entries);
+    if entries != history {
+        save_history(&entries);
+    }
 
     entries
 }

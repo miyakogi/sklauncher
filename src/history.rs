@@ -1,5 +1,4 @@
 use std::fs;
-use std::io::prelude::*;
 use std::path::PathBuf;
 
 use indexmap::map::IndexMap;
@@ -12,23 +11,26 @@ fn get_hist_file() -> PathBuf {
     if !cache_dir.is_dir() {
         fs::create_dir_all(cache_dir.as_path()).unwrap();
     }
-    let hist_file = cache_dir.join("history.toml");
-    if !hist_file.is_file() {
-        fs::write(hist_file.as_path(), b"").unwrap();
-    }
-    hist_file
+    cache_dir.join("history.toml")
 }
 
 pub fn load_history() -> IndexMap<String, Entry> {
-    let contents = fs::read_to_string(get_hist_file()).expect("Failed to open history file");
-    toml::from_str::<IndexMap<String, Entry>>(&contents).expect("History file is broken")
+    let hist_file = get_hist_file();
+    let contents = match fs::read_to_string(&hist_file) {
+        Ok(c) => c,
+        Err(_) => return IndexMap::new(),
+    };
+    toml::from_str(&contents).unwrap_or_else(|e| {
+        eprintln!("Warning: history file is broken, starting fresh: {e}");
+        IndexMap::new()
+    })
 }
 
 pub fn save_history(history: &IndexMap<String, Entry>) {
-    let hist_file_path = get_hist_file();
-    let mut file = fs::File::create(hist_file_path).expect("Failed to open history file");
-    let contents = toml::to_string::<IndexMap<String, Entry>>(history)
-        .expect("Failed convert history to toml format");
-    file.write_all(contents.as_bytes())
-        .expect("Failed to write history file");
+    let hist_file = get_hist_file();
+    let contents = toml::to_string(&history).expect("Failed to serialize history");
+    // Atomic write: write to temp file, then rename
+    let tmp_path = hist_file.with_extension("toml.tmp");
+    fs::write(&tmp_path, &contents).expect("Failed to write history temp file");
+    fs::rename(&tmp_path, &hist_file).expect("Failed to rename history file");
 }
