@@ -59,8 +59,8 @@ fn exec_term(entry: Entry) {
     }
     term_cmd.push(cmd);
 
-    let joined_command = shlex::try_join(term_cmd.iter().map(String::as_str))
-        .expect("Failed to join command");
+    let joined_command =
+        shlex::try_join(term_cmd.iter().map(String::as_str)).expect("Failed to join command");
     _exec(&joined_command);
 }
 
