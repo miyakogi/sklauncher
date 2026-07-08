@@ -161,11 +161,11 @@ impl SkimItem for Entry {
                 )
             }
             Matches::ByteRange(start, end) => {
-                let s = context.text[start..end].chars().count();
-                let e = s + context.text[start..end].chars().count();
-                let empty = s == e;
-                let start = if empty { s } else { s + icon_shift };
-                let end = if empty { e } else { e + icon_shift + 1 };
+                let a = context.text[..start].chars().count();
+                let b = context.text[..end].chars().count();
+                let empty = a == b;
+                let start = if empty { a } else { a + icon_shift };
+                let end = if empty { b } else { b + icon_shift + 1 };
                 AnsiString::new_string(
                     text,
                     vec![(context.highlight_attr, (start as u32, end as u32))],
