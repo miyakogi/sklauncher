@@ -49,14 +49,14 @@ fn get_paths() -> Vec<PathBuf> {
     result
 }
 
-fn get_mtime(file: &Path) -> f64 {
+fn get_mtime(file: &Path) -> Option<f64> {
     fs::metadata(file)
-        .expect("Failed to check metadata")
+        .ok()?
         .modified()
-        .unwrap()
+        .ok()?
         .duration_since(SystemTime::UNIX_EPOCH)
-        .unwrap()
-        .as_secs_f64()
+        .ok()
+        .map(|d| d.as_secs_f64())
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
@@ -294,7 +294,7 @@ fn load_desktop_entry_file(file: &Path, history: &EntryMap) -> Option<Entry> {
     let mtime = get_mtime(file);
     let filestr = file.to_str().unwrap().to_string();
     if history.contains_key(&filestr) {
-        if history.get(&filestr).unwrap().mtime.unwrap() == mtime {
+        if history.get(&filestr).unwrap().mtime == mtime {
             return Some(history.get(&filestr).unwrap().clone());
         } else {
             count = history.get(&filestr).unwrap().count;
@@ -315,7 +315,7 @@ fn load_desktop_entry_file(file: &Path, history: &EntryMap) -> Option<Entry> {
     entry.desktop = true;
     entry.path = filestr;
     entry.count = count;
-    entry.mtime = Some(mtime);
+    entry.mtime = mtime;
     match section.get("Name") {
         Some(name) => entry.name = name.to_string(),
         _ => return None,
