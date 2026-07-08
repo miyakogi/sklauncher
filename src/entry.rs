@@ -331,7 +331,12 @@ fn load_desktop_entry_file(file: &Path, history: &EntryMap) -> Option<Entry> {
         None => entry.comment = None,
     }
     match section.get("Terminal") {
-        Some(terminal) => entry.terminal = terminal.parse::<LenientBool>().unwrap().into(),
+        Some(terminal) => {
+            entry.terminal = terminal
+                .parse::<LenientBool>()
+                .map(|b| b.into())
+                .unwrap_or(false)
+        }
         None => entry.terminal = false,
     }
     Some(entry)
