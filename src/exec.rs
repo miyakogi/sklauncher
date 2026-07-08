@@ -16,7 +16,13 @@ pub fn execute_raw(cmd: String) {
 }
 
 pub fn execute(pathstr: String, entries: &mut IndexMap<String, Entry>) {
-    let entry = entries.get_mut(&pathstr).unwrap();
+    let entry = match entries.get_mut(&pathstr) {
+        Some(e) => e,
+        None => {
+            eprintln!("Warning: selected entry not found: {pathstr}");
+            return;
+        }
+    };
     entry.count += 1;
     let entry = entry.clone();
     save_history(entries);
