@@ -190,14 +190,16 @@ impl SkimItem for Entry {
                 write!(text, "\n{}", comment).unwrap();
             }
         } else {
-            let output = Command::new("whatis")
+            match Command::new("whatis")
                 .arg("--long")
                 .arg(&self.path)
                 .output()
-                .unwrap_or_else(|_| panic!("Failed to read man of command: {}", self.path));
-            if output.status.success() {
-                let comment = String::from_utf8(output.stdout).unwrap();
-                write!(text, "\n{}", RE_WHATIS.replace_all(&comment, "")).unwrap();
+            {
+                Ok(output) if output.status.success() => {
+                    let comment = String::from_utf8(output.stdout).unwrap();
+                    write!(text, "\n{}", RE_WHATIS.replace_all(&comment, "")).unwrap();
+                }
+                _ => {}
             }
         }
         ItemPreview::AnsiText(text)
