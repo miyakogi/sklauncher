@@ -53,7 +53,7 @@ fn exec_term(entry: Entry) {
             term_cmd.extend(shlex::split(val).expect("Failed to parse --terminal-command option"))
         }
         None => match env::var_os("TERM") {
-            Some(val) => term_cmd = vec![val.to_str().unwrap().to_string(), "-e".to_string()],
+            Some(val) => term_cmd = vec![val.to_string_lossy().into_owned(), "-e".to_string()],
             None => term_cmd = vec!["alacritty".to_string(), "-e".to_string()],
         },
     }
